@@ -78,6 +78,7 @@ const UbigeoForm = props => {
     <form onSubmit={handleSubmit(handleProcesar)}>
       <div className="section">
         <label>Archivo de texto</label>
+        <span>&nbsp;(<a href="https://github.com/jtunoque/ubigeoapp" target="_blank">Código fuente</a>)</span>
         <div>
           <Field className="form-control ubigeoString" name="ubigeoString" component="textarea"  />
         </div>

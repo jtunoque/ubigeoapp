@@ -7,8 +7,7 @@ function App() {
   return (
     <div className="App">
       <UbigeoForm></UbigeoForm>
-      <UbigeosViewContainer></UbigeosViewContainer>
-
+      <UbigeosViewContainer></UbigeosViewContainer>    
     </div>
   );
 }
