@@ -38,7 +38,7 @@ const UbigeoForm = props => {
     for(let i in provArr)
     {
 
-      console.log(provArr[i]);
+      //console.log(provArr[i]);
       let provString = provArr[i];
      
       let regExpProv=/\d+[\w\sáéíóúÁÉÍÓÚ]*/g;      
