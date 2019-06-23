@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 
 
@@ -19,8 +18,8 @@ const UbigeoTableView=props=>
             </thead>
             <tbody>
             {listado.map(
-                    (item)=>
-                    <tr>
+                    (item,i)=>
+                    <tr key={i}>
                         <td>{item.Codigo}</td>
                         <td>{item.Nombre}</td>
                         <td>{item.CodigoPadre}</td>
@@ -33,15 +32,8 @@ const UbigeoTableView=props=>
     );
 };
 
-const mapStateToProps = (state) => ({
-    ...state
-  });
-
-
 //export default UbigeoTableView;
 
 
-export default connect(
-    mapStateToProps
-  )(UbigeoTableView);
+export default UbigeoTableView;
   

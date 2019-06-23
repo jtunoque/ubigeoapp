@@ -1,4 +1,6 @@
 import React, { Component } from "react";
+import {addUbigeoDep,addUbigeoProv,addUbigeoDist
+    ,cleanUbigeoDep,cleanUbigeoProv,cleanUbigeoDist} from '../actions/index';
 import { Field, reduxForm } from "redux-form";
 import Ubigeo from '../models/Ubigeo';
 import Common from '../helpers/common';
@@ -6,40 +8,40 @@ import UbigeoTableView from './UbigeoTableView';
 import './UbigeoForm.scss';
 
 const UbigeoForm = props => {
-  const {handleSubmit,submitting } = props;
-
-
-  let objDptos=[],objProvs=[],objDists=[];
+  const {handleSubmit,submitting, dispatch  } = props;
 
   const handleProcesar = (values)=>
   {    
 
-    
+    dispatch(cleanUbigeoDep());
+    dispatch(cleanUbigeoProv());
+    dispatch(cleanUbigeoDist());
 
     let ubigeosText = values.ubigeoString;
     
     //Get departamentos
-    let regExpDepLines = /\d+\s\w{1,10000}\s{0,4}\/\s{0,4}\/\s{0,2}/g; 
+    let regExpDepLines = /(\d+\s*[\w\sáéíóúÁÉÍÓÚ]*\s*)\/(\s*)\/(\s*)/g; 
     const depArr = ubigeosText.match(regExpDepLines)
     
     for(let i in depArr)
     {
       let ubigeoInfo=Common.formatUbigeo(depArr[i]);
       let objDpto=new Ubigeo(ubigeoInfo.codigo,ubigeoInfo.nombre,"-","-");
-      objDptos.push(objDpto);
+
+      dispatch(addUbigeoDep(objDpto));
     }
 
-     console.log(objDptos);
-
     //Get provincias
-    let regExpProvLines = /\d+\s\w+\s\/\s\d+\s\w+\s\/\s[^\w*]/g; 
+    let regExpProvLines = /(\d+\s*[\w\sáéíóúÁÉÍÓÚ]*\s*)\/(\s*\d+\s*[\w\sáéíóúÁÉÍÓÚ]*\s*)\/\s[^\w*]/g; 
     const provArr = ubigeosText.match(regExpProvLines)
     
     for(let i in provArr)
     {
+
+      console.log(provArr[i]);
       let provString = provArr[i];
      
-      let regExpProv=/\d+\s\w*/g;      
+      let regExpProv=/\d+[\w\sáéíóúÁÉÍÓÚ]*/g;      
       let provDetArr=provString.match(regExpProv);
 
       let ubigeoInfoFirst=Common.formatUbigeo(provDetArr[0]);
@@ -47,10 +49,9 @@ const UbigeoForm = props => {
       let objProv=new Ubigeo(ubigeoInfoSecond.codigo,ubigeoInfoSecond.nombre,
             ubigeoInfoFirst.codigo,ubigeoInfoFirst.nombre);
       
-      objProvs.push(objProv);
+      dispatch(addUbigeoProv(objProv));
     }
 
-    console.log(objProvs);
 
     //Get distritos
     let regExpDistLines = /\d+.*\/\s\d+\s.*\s\/\s\d+.*/g; 
@@ -68,11 +69,8 @@ const UbigeoForm = props => {
       let objDist=new Ubigeo(ubigeoInfoSecond.codigo,ubigeoInfoSecond.nombre,
             ubigeoInfoFirst.codigo,ubigeoInfoFirst.nombre);
       
-      objDists.push(objDist);
+      dispatch(addUbigeoDist(objDist));
     }
-
-    console.log(objDists);
-
 
   }
 
@@ -89,25 +87,20 @@ const UbigeoForm = props => {
           Procesar
         </button>
       </div>
-      <div className="section">
-        <h5>Departamentos</h5>
-        <UbigeoTableView name="departamentos" listado={objDptos} />
-      </div>
-      <div className="section">
-        <h5>Provincias</h5>
-        <UbigeoTableView name="provincias" listado={objProvs} />
-      </div>
-      <div className="section">
-        <h5>Distritos</h5>
-        <UbigeoTableView name="distritos" listado={objDists} />
-      </div>
+     
       
     </form>
     
   );
 };
 
+
 export default reduxForm(
     {
         form:"ubigeoForm",
+        initialValues:{ubigeoString:
+            '"01 Lima /  / "\n"01 Lima / 50 Lima / "\n"01 Lima / 51 Barranca / "\n"01 Lima / 50 Lima / 202 La Molina"\n"01 Lima / 50 Lima / 203 San Isidro"\n"02 Arequipa /  / "\n"02 Arequipa / 63 Arequipa / "\n"02 Arequipa / 64 Caylloma / "\n"02 Arequipa / 63 Arequipa / 267 Cercado"'
+        }
     })(UbigeoForm);
+
+    
